@@ -48,7 +48,7 @@ func (cmd CheckCommand) Execute([]string) error {
 	}
 	defer db.Close()
 
-	rows, err := db.Query(`select * from gp_segment_configuration, pg_filespace_entry where fsedbid = dbid`)
+	rows, err := db.Query(`select * from gp_segment_configuration`)
 	if err != nil {
 		return err
 	}
