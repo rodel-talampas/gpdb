@@ -131,12 +131,12 @@ func (FakeWriter) Write() error {
 
 func setupSegmentConfigInDB(mock sqlmock.Sqlmock) {
 	header := []string{"dbid", "content", "role", "preferred_role", "mode", "status", "port",
-		"hostname", "address", "replication_port", "san_mounts",
+		"hostname", "address", "replication_port",
 		"fsefsoid", "fsedbid", "fselocation"}
 	fakeConfigRow := []driver.Value{1, -1, 'p', 'p', 's', 'u', 15432, "office-5-231.pa.pivotal.io",
-		"office-5-231.pa.pivotal.io", nil, nil, nil, nil, nil}
+		"office-5-231.pa.pivotal.io", nil, nil, nil, nil}
 	fakeConfigRow2 := []driver.Value{2, 0, 'p', 'p', 's', 'u', 25432, "office-5-231.pa.pivotal.io",
-		"office-5-231.pa.pivotal.io", 25438, nil, nil, nil, nil}
+		"office-5-231.pa.pivotal.io", 25438, nil, nil, nil}
 	rows := sqlmock.NewRows(header)
 	heapfakeResult := rows.AddRow(fakeConfigRow...).AddRow(fakeConfigRow2...)
 	mock.ExpectQuery(SELECT_SEGMENT_CONFIG_QUERY).WillReturnRows(heapfakeResult)
@@ -157,7 +157,6 @@ const (
 	  "preferred_role": 112,
 	  "replication_port": null,
 	  "role": 112,
-	  "san_mounts": null,
 	  "status": 117
 	},
 	{
@@ -173,7 +172,6 @@ const (
 	  "preferred_role": 112,
 	  "replication_port": 25438,
 	  "role": 112,
-	  "san_mounts": null,
 	  "status": 117
 	}
 	]`
