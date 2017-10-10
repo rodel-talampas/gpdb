@@ -76,6 +76,7 @@
 #include "utils/memutils.h"
 #include "utils/snapmgr.h"
 #include "utils/tqual.h"
+#include "utils/metrics_utils.h"
 
 #include "utils/ps_status.h"
 #include "utils/snapmgr.h"
@@ -106,7 +107,6 @@
 #include "cdb/cdbtargeteddispatch.h"
 
 extern bool cdbpathlocus_querysegmentcatalogs;
-
 
 /* Hooks for plugins to get control in ExecutorStart/Run/End() */
 ExecutorStart_hook_type ExecutorStart_hook = NULL;
@@ -299,6 +299,10 @@ standard_ExecutorStart(QueryDesc *queryDesc, int eflags)
 	{
 		gpmon_qlog_query_start(queryDesc->gpmon_pkt);
 	}
+
+	/* GPDB hook for collecting query info */
+	if (query_info_collect_hook)
+		(*query_info_collect_hook)(METRICS_QUERY_START, queryDesc);
 
 	/**
 	 * Distribute memory to operators.
@@ -1184,6 +1188,10 @@ standard_ExecutorEnd(QueryDesc *queryDesc)
 		queryDesc->gpmon_pkt = NULL;
 	}
 
+	/* GPDB hook for collecting query info */
+	if (query_info_collect_hook)
+		(*query_info_collect_hook)(METRICS_QUERY_DONE, queryDesc);
+
 	/* Reset queryDesc fields that no longer point to anything */
 	queryDesc->tupDesc = NULL;
 	queryDesc->estate = NULL;
@@ -1922,6 +1930,10 @@ InitPlan(QueryDesc *queryDesc, int eflags)
 	 * processing tuples.
 	 */
 	planstate = ExecInitNode(start_plan_node, estate, eflags);
+
+	/* GPDB hook for collecting query info */
+	if (query_info_collect_hook)
+		(*query_info_collect_hook)(METRICS_PLAN_NODE_INITIALIZE, queryDesc);
 
 	queryDesc->planstate = planstate;
 
