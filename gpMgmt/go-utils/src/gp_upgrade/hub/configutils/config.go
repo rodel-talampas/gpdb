@@ -19,12 +19,12 @@ import (
 type SegmentConfiguration []Segment
 
 type Segment struct {
-	Address     string `json:"address"`
-	Content     int    `json:"content"`
-	DBID        int    `json:"dbid"`
-	Fselocation string `json:fselocation`
-	Hostname    string `json:"hostname"`
-	Port        int    `json:"port"`
+	Address  string `json:"address"`
+	Content  int    `json:"content"`
+	DBID     int    `json:"dbid"`
+	Datadir  string `json:datadir`
+	Hostname string `json:"hostname"`
+	Port     int    `json:"port"`
 }
 
 func GetConfigDir() string {

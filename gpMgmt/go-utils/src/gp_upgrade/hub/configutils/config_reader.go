@@ -2,7 +2,7 @@ package configutils
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"gp_upgrade/utils"
 
 	"github.com/pkg/errors"
 )
@@ -29,7 +29,8 @@ func (reader *Reader) Read() error {
 		return errors.New("Reader file location unknown")
 	}
 
-	contents, err := ioutil.ReadFile(reader.fileLocation)
+	contents, err := utils.System.ReadFile(reader.fileLocation)
+
 	if err != nil {
 		return errors.New(err.Error())
 	}
@@ -81,7 +82,7 @@ func (reader Reader) GetMasterDataDir() string {
 	for i := 0; i < len(config); i++ {
 		segment := config[i]
 		if segment.Content == -1 {
-			return segment.Fselocation
+			return segment.Datadir
 		}
 	}
 	return ""
