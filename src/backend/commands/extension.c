@@ -737,7 +737,7 @@ execute_sql_string(const char *sql, const char *filename)
 										sql,
 										GetActiveSnapshot(), NULL,
 										dest, NULL,
-										(gp_enable_query_metrics ? INSTRUMENT_ROWS : 0));
+										GP_INSTRUMENT_OPTS);
 
 				ExecutorStart(qdesc, 0);
 				ExecutorRun(qdesc, ForwardScanDirection, 0);

@@ -454,7 +454,7 @@ static char *gp_server_version_string;
 
 /* Query Metrics */
 bool		gp_enable_query_metrics = false;
-int			gp_max_shmem_instruments = 30000;
+int			gp_instrument_shmem_size = 5120;
 
 /* Security */
 bool		gp_reject_internal_tcp_conn = true;
@@ -3646,12 +3646,13 @@ struct config_int ConfigureNamesInt_gp[] =
 	},
 
 	{
-		{"gp_max_shmem_instruments", PGC_POSTMASTER, UNGROUPED,
-			gettext_noop("Max number of instrument slots reserved on shmem."),
+		{"gp_instrument_shmem_size", PGC_POSTMASTER, UNGROUPED,
+			gettext_noop("Sets the size of shmem allocated for instrumentation."),
 			NULL,
+			GUC_UNIT_KB
 		},
-		&gp_max_shmem_instruments,
-		30000, 0, 131072, NULL, NULL
+		&gp_instrument_shmem_size,
+		5120, 0, 131072, NULL, NULL
 	},
 
 	{

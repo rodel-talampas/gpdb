@@ -25,10 +25,11 @@ struct CdbExplain_NodeSummary;          /* private def in cdb/cdbexplain.c */
 /* Flag bits included in InstrAlloc's instrument_options bitmask */
 typedef enum InstrumentOption
 {
+	INSTRUMENT_NONE = 0,
 	INSTRUMENT_TIMER = 1 << 0,	/* needs timer (and row counts) */
 	INSTRUMENT_BUFFERS = 1 << 1,	/* needs buffer usage (not implemented yet) */
 	INSTRUMENT_ROWS = 1 << 2,	/* needs row count */
-	INSTRUMENT_CDB = 1 << 3,	/* needs cdb statistics */
+	INSTRUMENT_CDB = 0x40000000,	/* needs cdb statistics */
 	INSTRUMENT_ALL = PG_INT32_MAX
 } InstrumentOption;
 
@@ -101,6 +102,8 @@ extern void InstrEndLoop(Instrumentation *instr);
 	}																			\
 } while(0)
 
+#define GP_INSTRUMENT_OPTS (gp_enable_query_metrics ? INSTRUMENT_ROWS : INSTRUMENT_NONE)
+
 /* Greenplum query metrics */
 typedef struct InstrumentationHeader
 {
@@ -132,6 +135,7 @@ typedef struct InstrumentationResownerSet
 } InstrumentationResownerSet;
 
 extern InstrumentationHeader *InstrumentGlobal;
+extern Size InstrShmemNumSlots(void);
 extern Size InstrShmemSize(void);
 extern void InstrShmemInit(void);
 extern Instrumentation *GpInstrAlloc(const Plan *node, int instrument_options);

@@ -550,7 +550,7 @@ postquel_start(execution_state *es, SQLFunctionCachePtr fcache)
 								 snapshot, InvalidSnapshot,
 								 dest,
 								 fcache->paramLI,
-								 (gp_enable_query_metrics ? INSTRUMENT_ROWS : 0));
+								 GP_INSTRUMENT_OPTS);
 		
 		/* GPDB hook for collecting query info */
 		if (query_info_collect_hook)

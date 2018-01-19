@@ -17,10 +17,10 @@ SELECT 1;
         1
 (1 row)
 
-SHOW GP_MAX_SHMEM_INSTRUMENTS;
- gp_max_shmem_instruments 
+SHOW GP_INSTRUMENT_SHMEM_SIZE;
+ gp_instrument_shmem_size 
 --------------------------
- 30000
+ 5MB
 (1 row)
 
 SELECT 1;

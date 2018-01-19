@@ -1620,7 +1620,7 @@ DoCopyInternal(const CopyStmt *stmt, const char *queryString, CopyState cstate)
 											GetActiveSnapshot(),
 											InvalidSnapshot,
 											dest, NULL,
-											(gp_enable_query_metrics ? INSTRUMENT_ROWS : 0));
+											GP_INSTRUMENT_OPTS);
 
 		if (gp_enable_gpperfmon && Gp_role == GP_ROLE_DISPATCH)
 		{

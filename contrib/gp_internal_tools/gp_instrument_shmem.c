@@ -64,7 +64,7 @@ gp_instrument_shmem_summary(PG_FUNCTION_ARGS)
 	if (InstrumentGlobal)
 	{
 		values[1] = Int64GetDatum(InstrumentGlobal->free);
-		values[2] = Int64GetDatum(gp_max_shmem_instruments - InstrumentGlobal->free);
+		values[2] = Int64GetDatum(InstrShmemNumSlots() - InstrumentGlobal->free);
 	}
 	else
 	{
@@ -83,9 +83,9 @@ next_used_slot(int32 *crtIndexPtr)
 	if (InstrumentGlobal == NULL)
 		return NULL;
 
-	while (*crtIndexPtr < gp_max_shmem_instruments && SlotIsEmpty(GET_SLOT_BY_INDEX(*crtIndexPtr)))
+	while (*crtIndexPtr < InstrShmemNumSlots() && SlotIsEmpty(GET_SLOT_BY_INDEX(*crtIndexPtr)))
 		(*crtIndexPtr)++;
-	return *crtIndexPtr >= gp_max_shmem_instruments ? NULL : GET_SLOT_BY_INDEX((*crtIndexPtr)++);
+	return *crtIndexPtr >= InstrShmemNumSlots() ? NULL : GET_SLOT_BY_INDEX((*crtIndexPtr)++);
 }
 
 /*

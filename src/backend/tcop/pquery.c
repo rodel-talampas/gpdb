@@ -232,12 +232,12 @@ ProcessQuery(Portal portal,
 		queryDesc = CreateQueryDesc(stmt, portal->sourceText,
 									SnapshotAny, InvalidSnapshot,
 									dest, params,
-									(gp_enable_query_metrics ? INSTRUMENT_ROWS : 0));
+									GP_INSTRUMENT_OPTS);
 	else
 		queryDesc = CreateQueryDesc(stmt, portal->sourceText,
 									GetActiveSnapshot(), InvalidSnapshot,
 									dest, params,
-									(gp_enable_query_metrics ? INSTRUMENT_ROWS : 0));
+									GP_INSTRUMENT_OPTS);
 	queryDesc->ddesc = portal->ddesc;
 
 	if (gp_enable_gpperfmon && Gp_role == GP_ROLE_DISPATCH)
@@ -646,7 +646,7 @@ PortalStart(Portal portal, ParamListInfo params, Snapshot snapshot,
 											InvalidSnapshot,
 											None_Receiver,
 											params,
-											(gp_enable_query_metrics ? INSTRUMENT_ROWS : 0));
+											GP_INSTRUMENT_OPTS);
 				queryDesc->ddesc = ddesc;
 				
 				if (gp_enable_gpperfmon && Gp_role == GP_ROLE_DISPATCH)

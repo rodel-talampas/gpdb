@@ -1411,7 +1411,7 @@ InitSliceTable(EState *estate, int nMotions, int nSubplans)
 	table->nMotions = nMotions;
 	table->nInitPlans = nSubplans;
 	table->slices = NIL;
-    table->instrument_options = 0;
+	table->instrument_options = 0;
 
 	/* Each slice table has a unique-id. */
 	table->ic_instance_id = ++gp_interconnect_id;
@@ -2101,7 +2101,7 @@ void mppExecutorCleanup(QueryDesc *queryDesc)
 	/* GPDB hook for collecting query info */
 	if (query_info_collect_hook && QueryCancelCleanup)
 		(*query_info_collect_hook)(METRICS_QUERY_CANCELING, queryDesc);
-	
+
 	/*
 	 * If this query is being canceled, record that when the gpperfmon
 	 * is enabled.

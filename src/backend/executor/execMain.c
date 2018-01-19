@@ -107,7 +107,6 @@
 #include "cdb/cdbtargeteddispatch.h"
 
 extern bool cdbpathlocus_querysegmentcatalogs;
-
 /* Hooks for plugins to get control in ExecutorStart/Run/End() */
 ExecutorStart_hook_type ExecutorStart_hook = NULL;
 ExecutorRun_hook_type ExecutorRun_hook = NULL;

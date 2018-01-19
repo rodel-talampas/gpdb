@@ -30,6 +30,7 @@ static void instrShmemRecycleCallback(ResourceReleasePhase phase, bool isCommit,
 InstrumentationHeader *InstrumentGlobal = NULL;
 
 static int  scanNodeCounter = 0;
+static int  shmemNumSlots = -1;
 static bool instrumentResownerCallbackRegistered = false;
 static InstrumentationResownerSet *slotsOccupied = NULL;
 
@@ -130,22 +131,38 @@ InstrEndLoop(Instrumentation *instr)
 	instr->tuplecount = 0;
 }
 
+/* Calcutlate number slots from gp_instrument_shmem_size */
+Size
+InstrShmemNumSlots(void)
+{
+	if (shmemNumSlots < 0) {
+		shmemNumSlots = (int)(gp_instrument_shmem_size * 1024 - sizeof(InstrumentationHeader)) / sizeof(InstrumentationSlot);
+	}
+	return (shmemNumSlots < 0) ? 0 : shmemNumSlots;
+}
+
 /* Allocate a header and an array of Instrumentation slots */
 Size
 InstrShmemSize(void)
 {
 	Size		size = 0;
+	Size		number_slots;
 
 	/* If start in utility mode, disallow Instrumentation on Shmem */
 	if (Gp_session_role == GP_ROLE_UTILITY)
 		return size;
 
 	/* If GUCs not enabled, bypass Instrumentation on Shmem */
-	if (!gp_enable_query_metrics || gp_max_shmem_instruments <= 0)
+	if (!gp_enable_query_metrics || gp_instrument_shmem_size <= 0)
+		return size;
+
+	number_slots = InstrShmemNumSlots();
+
+	if (number_slots <= 0)
 		return size;
 
 	size = add_size(size, sizeof(InstrumentationHeader));
-	size = add_size(size, mul_size(gp_max_shmem_instruments, sizeof(InstrumentationSlot)));
+	size = add_size(size, mul_size(number_slots, sizeof(InstrumentationSlot)));
 
 	return size;
 }
@@ -154,11 +171,12 @@ InstrShmemSize(void)
 void
 InstrShmemInit(void)
 {
-	Size		size;
+	Size		size, number_slots;
 	InstrumentationSlot *slot;
 	InstrumentationHeader *header;
 	int			i;
 
+	number_slots = InstrShmemNumSlots();
 	size = InstrShmemSize();
 	if (size <= 0)
 		return;
@@ -176,11 +194,11 @@ InstrShmemInit(void)
 
 	/* header points to the first slot */
 	header->head = slot;
-	header->free = gp_max_shmem_instruments;
+	header->free = number_slots;
 	SpinLockInit(&header->lock);
 
 	/* Each slot points to next one to construct the free list */
-	for (i = 0; i < gp_max_shmem_instruments - 1; i++)
+	for (i = 0; i < number_slots - 1; i++)
 		GetInstrumentNext(&slot[i]) = &slot[i + 1];
 	GetInstrumentNext(&slot[i]) = NULL;
 
